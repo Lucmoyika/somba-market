@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if ($this->app->runningInConsole()) {
+            return;
+        }
+
+        $locale = Session::get('locale', config('app.locale'));
+        if (! in_array($locale, ['en', 'fr'], true)) {
+            $locale = config('app.locale');
+        }
+
+        App::setLocale($locale);
     }
 }
