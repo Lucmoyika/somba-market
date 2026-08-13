@@ -2,6 +2,263 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    color-scheme: light;
+    --sombra-bg: #f8fafc;
+    --sombra-surface: #ffffff;
+    /* Slightly toned surface for inputs and small surfaces (not pure white) */
+    --sombra-surface-soft: #e6eef6;
+    --sombra-border: rgba(148, 163, 184, 0.24);
+    --sombra-text: #0f172a;
+    --sombra-muted: #64748b;
+    --sombra-placeholder: rgba(15, 23, 42, 0.98);
+    --sombra-card-shadow: 0 16px 50px -24px rgba(15, 23, 42, 0.18);
+    --sombra-primary: #4f46e5;
+    --sombra-primary-dark: #4338ca;
+    --sombra-primary-soft: #eef2ff;
+    --sombra-success: #16a34a;
+    --sombra-warning: #f59e0b;
+    --sombra-danger: #dc2626;
+}
+
+html.light,
+body.light {
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    @apply antialiased;
+    background-color: var(--sombra-bg);
+    color: var(--sombra-text);
+}
+
+::selection {
+    background: rgba(79, 70, 229, 0.18);
+    color: inherit;
+}
+
+@layer base {
+    h1, h2, h3, h4, h5, h6 {
+        letter-spacing: -0.02em;
+    }
+    a {
+        color: inherit;
+    }
+}
+
+@layer components {
+    .sombra-card {
+        @apply rounded-[1.75rem] border shadow-sm;
+        background-color: var(--sombra-surface);
+        border-color: var(--sombra-border);
+        box-shadow: var(--sombra-card-shadow);
+    }
+
+    .sombra-card-strong {
+        @apply rounded-[1.75rem] border shadow-sm;
+        background-color: var(--sombra-surface-soft);
+        border-color: var(--sombra-border);
+        box-shadow: var(--sombra-card-shadow);
+    }
+
+    .sombra-card-accent {
+        @apply rounded-[1.75rem] bg-indigo-50/80 p-6;
+    }
+
+    .sombra-btn-primary {
+        @apply inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:ring-offset-2;
+    }
+
+    .sombra-btn-secondary {
+        @apply inline-flex items-center justify-center rounded-2xl border px-4 py-2 text-sm font-semibold shadow-sm transition focus:outline-none focus:ring-2 focus:ring-indigo-500/20;
+        background-color: var(--sombra-surface);
+        border-color: var(--sombra-border);
+        color: var(--sombra-text);
+    }
+
+    .sombra-btn-danger {
+        @apply inline-flex items-center justify-center rounded-2xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500/30 focus:ring-offset-2;
+    }
+
+    .sombra-input {
+        @apply block w-full rounded-2xl border px-4 py-3 text-sm shadow-sm transition;
+        background-color: var(--sombra-surface-soft);
+        border-color: var(--sombra-border);
+        color: var(--sombra-text);
+        --tw-ring-color: color-mix(in srgb, var(--sombra-primary) 80%, transparent);
+        outline: none;
+    }
+
+    .sombra-input:focus {
+        box-shadow: 0 0 0 4px rgba(99,102,241,0.12);
+        border-color: var(--sombra-primary);
+    }
+
+    .sombra-input:disabled {
+        @apply cursor-not-allowed opacity-60;
+    }
+
+    /* Ensure typed text and caret are visible inside sombra inputs */
+    .sombra-input,
+    input.sombra-input,
+    textarea.sombra-input,
+    select.sombra-input {
+        caret-color: var(--sombra-text);
+        -webkit-text-fill-color: var(--sombra-text);
+        color: var(--sombra-text);
+    }
+
+    .sombra-badge {
+        @apply inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700;
+    }
+
+    .sombra-section-title {
+        @apply text-sm font-semibold uppercase tracking-[0.28em] text-indigo-600;
+    }
+
+    /* Surface helpers to replace hardcoded bg-slate-50 in views */
+    .sombra-surface {
+        background-color: var(--sombra-surface);
+    }
+
+    .sombra-surface-soft {
+        background-color: var(--sombra-surface-soft);
+    }
+
+    .sombra-bg {
+        background-color: var(--sombra-bg);
+    }
+
+    .sombra-surface-95 {
+        background-color: rgba(255, 255, 255, 0.95);
+    }
+
+    html.dark .sombra-surface-95 {
+            background-color: rgba(11, 18, 32, 0.95);
+        }
+
+    /* Hover helper for surfaces (used where Tailwind arbitrary values aren't present) */
+    .hover\:sombra-surface-soft:hover {
+        background-color: var(--sombra-surface-soft);
+    }
+}
+
+html.light {
+    background-color: #f8fafc;
+    color: #0f172a;
+    --sombra-bg: #f8fafc;
+    --sombra-surface: #ffffff;
+    --sombra-surface-soft: #e6eef6;
+    --sombra-border: rgba(148, 163, 184, 0.24);
+    --sombra-primary: #4f46e5;
+    --sombra-muted: #64748b;
+    --sombra-placeholder: rgba(15, 23, 42, 0.98);
+    --sombra-text: #0f172a;
+}
+
+html.dark {
+    background-color: #020617;
+    color: #f8fafc;
+    --sombra-bg: #020617;
+    --sombra-surface: #0b1220; /* card surface in dark */
+    --sombra-surface-soft: #071019;
+    --sombra-border: rgba(255,255,255,0.04);
+    --sombra-primary: #6366f1;
+    --sombra-muted: rgba(203,213,225,0.64);
+    --sombra-placeholder: rgba(255,255,255,0.98);
+    --sombra-text: #f8fafc;
+}
+
+/* Respect system preference when no explicit theme class is present */
+@media (prefers-color-scheme: dark) {
+    html:not(.light):not(.dark) {
+        --sombra-surface: #0b1220;
+        --sombra-surface-soft: #071019;
+        --sombra-border: rgba(255,255,255,0.04);
+        --sombra-primary: #6366f1;
+        --sombra-text: #f8fafc;
+    }
+}
+
+/* Ensure sombra-card adapts to the CSS tokens (light + dark) */
+html.dark .sombra-card {
+    border-color: var(--sombra-border);
+    background-color: var(--sombra-surface);
+    box-shadow: 0 8px 24px rgba(2,6,23,0.45);
+}
+
+html.dark .sombra-card-strong {
+    @apply border-slate-700 bg-slate-900;
+}
+
+html.dark .sombra-btn-secondary {
+    @apply bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800;
+}
+
+html.dark .sombra-input {
+    border-color: var(--sombra-border);
+    background-color: var(--sombra-surface-soft);
+    color: var(--sombra-text);
+}
+
 [x-cloak] {
     display: none;
+}
+
+/* Fix browser autofill background (Chrome, Safari) to match our tokens */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px var(--sombra-surface-soft) inset !important;
+    box-shadow: 0 0 0px 1000px var(--sombra-surface-soft) inset !important;
+    -webkit-text-fill-color: var(--sombra-text) !important;
+}
+
+input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px var(--sombra-surface-soft) inset !important;
+    box-shadow: 0 0 0px 1000px var(--sombra-surface-soft) inset !important;
+}
+
+/* Placeholder color rules (global + vendor prefixes) */
+/* Standard */
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+    color: var(--sombra-placeholder);
+    opacity: 1; /* ensure consistent visibility */
+}
+
+/* Webkit / Blink */
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder,
+select::-webkit-input-placeholder {
+    color: var(--sombra-placeholder);
+    opacity: 1;
+}
+
+/* Mozilla */
+input::-moz-placeholder,
+textarea::-moz-placeholder,
+select::-moz-placeholder {
+    color: var(--sombra-placeholder);
+    opacity: 1;
+}
+
+/* IE */
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder,
+select:-ms-input-placeholder {
+    color: var(--sombra-placeholder);
+    opacity: 1;
+}
+
+/* Ensure sombra-input placeholders follow the same token */
+.sombra-input::placeholder {
+    color: var(--sombra-placeholder);
+    opacity: 1;
 }
