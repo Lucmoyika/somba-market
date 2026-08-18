@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
 use App\Http\Controllers\Delivery\DashboardController as DeliveryDashboardController;
 use App\Http\Controllers\Support\DashboardController as SupportDashboardController;
@@ -22,6 +23,11 @@ Route::get('/locale/{locale}', function ($locale) {
 
     return redirect()->back();
 })->name('locale.switch');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/auth/google', [GoogleController::class, 'redirectToProvider'])->name('google.login');
+    Route::get('/auth/google/callback', [GoogleController::class, 'handleCallback'])->name('google.callback');
+});
 
 // Temporary route to create a local admin user (only in local environment)
 Route::get('/_create-admin', function () {
