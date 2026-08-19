@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Vendor;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class VendorManagementTest extends TestCase
@@ -142,6 +143,52 @@ class VendorManagementTest extends TestCase
         $this->actingAs($customer)
             ->get('/vendors')
             ->assertForbidden();
+    }
+
+    public function test_vendor_index_only_displays_owned_vendor_data(): void
+    {
+        $vendorUser = User::factory()->create();
+        $vendorUser->assignRole('vendor');
+        $ownVendor = Vendor::factory()->create(['user_id' => $vendorUser->id, 'name' => 'Own Vendor']);
+        $otherVendor = Vendor::factory()->create(['name' => 'Other Vendor']);
+
+        $this->actingAs($vendorUser)
+            ->get('/vendors')
+            ->assertOk()
+            ->assertSee($ownVendor->name)
+            ->assertDontSee($otherVendor->name);
+    }
+
+    public function test_vendor_can_update_own_vendor_from_livewire_component(): void
+    {
+        $vendorUser = User::factory()->create();
+        $vendorUser->assignRole('vendor');
+        $vendor = Vendor::factory()->create([
+            'user_id' => $vendorUser->id,
+            'slug' => 'vendor-livewire',
+            'name' => 'Vendor Before',
+        ]);
+
+        Livewire::actingAs($vendorUser)
+            ->test(\App\Livewire\Vendors\Index::class)
+            ->set('editingId', $vendor->id)
+            ->set('name', 'Vendor After')
+            ->set('slug', 'vendor-livewire')
+            ->set('description', 'Updated description')
+            ->set('phone', '+243999999999')
+            ->set('email', 'vendor-updated@example.com')
+            ->set('user_id', (string) $vendorUser->id)
+            ->set('formStatus', Vendor::STATUS_ACTIVE)
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('vendors', [
+            'id' => $vendor->id,
+            'name' => 'Vendor After',
+            'slug' => 'vendor-livewire',
+            'status' => Vendor::STATUS_ACTIVE,
+            'description' => 'Updated description',
+        ]);
     }
 
     public function test_validation_prevents_invalid_vendor_data(): void
