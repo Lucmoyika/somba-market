@@ -4,9 +4,9 @@ namespace App\Livewire\Vendors;
 
 use App\Models\Vendor;
 use App\Services\VendorService;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
-use Livewire\Attributes\Rule;
 
 class Index extends Component
 {
@@ -14,25 +14,18 @@ class Index extends Component
 
     public string $status = '';
 
-    #[Rule('required|string|max:255')]
     public string $name = '';
 
-    #[Rule('required|string|max:255|unique:vendors,slug')]
     public string $slug = '';
 
-    #[Rule('nullable|string')]
     public string $description = '';
 
-    #[Rule('nullable|string|max:20')]
     public string $phone = '';
 
-    #[Rule('nullable|email|max:255')]
     public string $email = '';
 
-    #[Rule('required|integer|exists:users,id')]
     public int|string $user_id = '';
 
-    #[Rule('required|in:pending,active,suspended')]
     public string $formStatus = 'pending';
 
     public ?int $editingId = null;
@@ -44,7 +37,14 @@ class Index extends Component
 
     public function render()
     {
+        Gate::authorize('viewAny', Vendor::class);
+
+        $user = auth()->user();
+
         $vendors = Vendor::query()
+            ->when($user && $user->hasRole('vendor') && ! $user->hasRole('admin'), function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
             ->when($this->search !== '', function ($query) {
                 $search = trim($this->search);
                 $query->where(function ($q) use ($search) {
@@ -65,16 +65,19 @@ class Index extends Component
 
     public function submit(VendorService $vendorService): void
     {
-        Gate::authorize('create', Vendor::class);
-
-        $data = $this->validate();
-
         if ($this->editingId) {
             $vendor = Vendor::findOrFail($this->editingId);
             Gate::authorize('update', $vendor);
+            $data = $this->validate();
+            $data['status'] = $data['formStatus'];
+            unset($data['formStatus']);
             $vendorService->update($vendor, $data);
             session()->flash('success', 'Vendor updated successfully.');
         } else {
+            Gate::authorize('create', Vendor::class);
+            $data = $this->validate();
+            $data['status'] = $data['formStatus'];
+            unset($data['formStatus']);
             $vendorService->create($data);
             session()->flash('success', 'Vendor created successfully.');
         }
@@ -123,5 +126,18 @@ class Index extends Component
         $this->email = '';
         $this->user_id = '';
         $this->formStatus = 'pending';
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'slug' => ['required', 'string', 'max:255', Rule::unique('vendors', 'slug')->ignore($this->editingId)],
+            'description' => ['nullable', 'string'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'formStatus' => ['required', 'in:pending,active,suspended'],
+        ];
     }
 }

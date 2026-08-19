@@ -115,9 +115,11 @@ Route::middleware([
         ->middleware(['auth', 'can:viewAny,App\\Models\\Vendor']);
 
     Route::patch('/vendors/{vendor}/activate', [VendorController::class, 'activate'])
+        ->middleware('can:activate,vendor')
         ->name('vendors.activate');
 
     Route::patch('/vendors/{vendor}/suspend', [VendorController::class, 'suspend'])
+        ->middleware('can:suspend,vendor')
         ->name('vendors.suspend');
 
     Route::prefix('customer')
